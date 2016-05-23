@@ -9,7 +9,7 @@ import java.io.*;
 public class Client {
    
    public static void main(String args[]) {
-      System.out.println(getTime() + "//Cleint start");
+      System.out.println(getTime() + ":Client start...");
       
       try {
          Socket socket = new Socket("localhost", 6006);
@@ -20,15 +20,18 @@ public class Client {
          ObjectOutputStream out = new ObjectOutputStream(outputStream);
          
          Scanner sc = new Scanner(System.in);
-         String output = "open";
-
+         String output = "open";       
+         
          while(!output.equalsIgnoreCase("no")){
             System.out.println("<Type your message>");
             output = sc.nextLine();
-            out.writeObject(output);
+            out.writeObject(output);            
          }
+         
          out.writeObject("exit");
          
+         list = dataFromServer.nextLine();
+         System.out.println(list);
          list = dataFromServer.nextLine();
          System.out.println(list);
          
@@ -40,6 +43,11 @@ public class Client {
    public static String getTime() {
       return new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance()
             .getTime());
+   }
+   
+   public Object[] msgServer(String querry){
+      Object[] rtrn = null;
+      return rtrn;
    }
    
 }
