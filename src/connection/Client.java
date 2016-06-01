@@ -6,48 +6,53 @@ import java.util.Calendar;
 import java.util.Scanner;
 import java.io.*;
 
-public class Client {
+public class Client{
+
+   private Socket socket;
+
+   private OutputStream outputStream;
+   private ObjectOutputStream out;
    
-   public static void main(String args[]) {
-      System.out.println(getTime() + ":Client start...");
-      
+   private ObjectInputStream in;
+   
+   private ClientListener cl;
+
+   public Client() {
       try {
-         Socket socket = new Socket("localhost", 6006);
-         String list;
-         Scanner dataFromServer = new Scanner(socket.getInputStream());
+         socket = new Socket("localhost", 6007);
          
-         OutputStream outputStream = socket.getOutputStream();
-         ObjectOutputStream out = new ObjectOutputStream(outputStream);
+         cl = new ClientListener(socket);
          
-         Scanner sc = new Scanner(System.in);
-         String output = "open";       
+         outputStream = socket.getOutputStream();
+         out = new ObjectOutputStream(outputStream);
          
-         while(!output.equalsIgnoreCase("no")){
-            System.out.println("<Type your message>");
-            output = sc.nextLine();
-            out.writeObject(output);            
-         }
-         
-         out.writeObject("exit");
-         
-         list = dataFromServer.nextLine();
-         System.out.println(list);
-         list = dataFromServer.nextLine();
-         System.out.println(list);
-         
-      } catch (Exception e) {
-         System.out.println(e);
+         new Thread(cl).start();
+      }
+      catch (UnknownHostException e) {
+         e.printStackTrace();
+      }
+      catch (IOException e) {
+         e.printStackTrace();
+      }
+      
+   }
+
+   public void send(String msg) {
+      try {
+         out.writeObject(msg);
+      }
+      catch (IOException e) {
+         e.printStackTrace();
       }
    }
    
    public static String getTime() {
-      return new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance()
-            .getTime());
+      return new SimpleDateFormat("HH:mm:ss")
+            .format(Calendar.getInstance().getTime());
    }
    
-   public Object[] msgServer(String querry){
-      Object[] rtrn = null;
-      return rtrn;
+   public ClientListener getListener(){
+      return this.cl;
    }
-   
+
 }

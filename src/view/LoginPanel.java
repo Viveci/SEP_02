@@ -12,7 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import controller.clientController;
+import connection.Client;
+import controller.ClientController;
+import controller.Controller;
+import model.model.Account;
 
 public class LoginPanel extends JPanel implements ActionListener {
 
@@ -27,12 +30,8 @@ public class LoginPanel extends JPanel implements ActionListener {
    //JButtons
    private JButton ButtonLogin;
    private JButton ButtonRegister;
-   
-   private clientController cntrl;
-   
-   public LoginPanel() {
       
-      cntrl = new clientController(this);
+   public LoginPanel() {
       
       this.setBackground(Color.WHITE);
       this.setBounds(0, 50, 800, 450);
@@ -77,18 +76,20 @@ public class LoginPanel extends JPanel implements ActionListener {
       add(ButtonRegister);
       
       ButtonRegister.addActionListener(this);
-      
+            
    }
 
    @Override
    public void actionPerformed(ActionEvent arg0) {
-      
       //Login option
       if(arg0.getActionCommand().equals("Login")){
-         if(cntrl.authenticate()){
-            System.out.println("Login panel: Logging in");
+         String msg = "auth:" + getInputEmail().getText()+":"+getInputPassword().getText(); 
+         if(ClientFrame.cntrl.auth(msg)){
             getParent().getComponent(0).setVisible(false);
-            getParent().add(new Dashboard(),0);
+            Account tempAccount = ClientFrame.cntrl.getAccount("dash:" + getInputEmail().getText());
+            Dashboard db = new Dashboard(tempAccount);
+            db.setAcc(tempAccount);
+            getParent().add(db,0);
          }
          else{
             JOptionPane.showMessageDialog(null,"There was an error during authenticaton process","Authentication",JOptionPane.WARNING_MESSAGE);
@@ -102,7 +103,6 @@ public class LoginPanel extends JPanel implements ActionListener {
          getParent().add(new RegisterPanel(),0);
       }
    }
-
    
    public JTextField getInputEmail() {
       return InputEmail;
@@ -110,7 +110,5 @@ public class LoginPanel extends JPanel implements ActionListener {
    public JPasswordField getInputPassword() {
       return InputPassword;
    }
-
-   
    
 }

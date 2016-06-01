@@ -10,7 +10,8 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 
-import model.Booking;
+import model.model.Account;
+import model.model.Booking;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -35,11 +36,15 @@ public class MyBookingsPanel extends JPanel implements ActionListener {
    private JComboBox FilterTypeCombo;
    private JCalendar calendar;
    private JLabel lblDate;
+   
+   private Account acc;
 
-   public MyBookingsPanel(){
+   public MyBookingsPanel(Account acc){
       this.setBackground(Color.WHITE);
       this.setBounds(0, 50, 800, 420);
       setLayout(null);
+      
+      this.acc = acc;
       
       BookingPanel = new JPanel();
       BookingPanel.setBounds(10, 10, 385, 400);
@@ -48,32 +53,7 @@ public class MyBookingsPanel extends JPanel implements ActionListener {
       
       scrollPane = new JScrollPane();
       scrollPane.setBounds(10, 10, 365, 380);
-      Booking[] data = {new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null)};
+      Booking[] data = {};
       upcomingList = new JList(data);
       upcomingList.setCellRenderer(new BookingCellRenderer());
       scrollPane.setViewportView(upcomingList);
@@ -132,7 +112,7 @@ public class MyBookingsPanel extends JPanel implements ActionListener {
       if(e.getActionCommand().equals("Back")){
          System.out.println("Booking panel: back");
          getParent().getComponent(0).setVisible(false);
-         getParent().add(new Dashboard(), 0);
+         getParent().add(new Dashboard(acc), 0);
       }
    }
 }

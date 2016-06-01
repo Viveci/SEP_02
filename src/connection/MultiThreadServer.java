@@ -8,49 +8,43 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MultiThreadServer implements Runnable {
-   
+import model.mediator.Model;
+import view.ServerFrame;
+
+public class MultiThreadServer implements Runnable, Observer {
+
    private Socket socket;
-   
-   protected MultiThreadServer(Socket socket){
-      this.socket = socket;
+   private ServerSocket ssock;
+
+   public MultiThreadServer() {
+
    }
-  
-   public static void main(String args[]) 
-         throws Exception {
-            ServerSocket ssock = new ServerSocket(6006);
-            System.out.println("Server started...\nListening...");
-            while (true) {
-               Socket sock = ssock.accept();
-               System.out.println("Connected");
-               new Thread(new MultiThreadServer(sock)).start();
-            }
-         }
 
    @Override
    public void run() {
-      try{
-         InputStream inputStream = socket.getInputStream();
-         ObjectInputStream in = new ObjectInputStream(inputStream);
-         String msg = "Go";
-         while(!msg.equalsIgnoreCase("Exit")){
-            msg = (String)in.readObject();
-            System.out.println(getTime()+": " + msg);
+      try {
+         ssock = new ServerSocket(6007);
+         System.out.println("Server started...\nListening...");
+         while (true) {
+            Socket sock = ssock.accept();
+            System.out.println("Connected");
+            new Thread(new ServerListener(sock, ServerFrame.cntrl)).start();
          }
-         System.out.println("Thread is stopped");
       }
-      catch(Exception e){
+      catch (IOException e) {
          e.printStackTrace();
       }
    }
 
-   public static String getTime() {
-      return new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance()
-            .getTime());
+   @Override
+   public void update(Observable arg0, Object arg1) {
+
    }
 
-   
 }

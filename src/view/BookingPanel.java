@@ -26,7 +26,8 @@ import javax.swing.text.DateFormatter;
 
 import com.toedter.calendar.JCalendar;
 
-import controller.clientController;
+import controller.ClientController;
+import model.model.Account;
 
 import javax.swing.JFormattedTextField;
 import javax.swing.SwingConstants;
@@ -56,12 +57,16 @@ public class BookingPanel extends JPanel implements ActionListener {
    private JSpinner EventFrom;
    private JSpinner EventTo;
    
-   private clientController controller;
+   private Account acc;
+   
+   private ClientController controller;
 
-   public BookingPanel(){
+   public BookingPanel(Account acc){
       this.setBackground(Color.WHITE);
       this.setBounds(0, 50, 800, 420);
       setLayout(null);
+      
+      this.acc = acc;
            
       EventDetails = new JPanel();
       EventDetails.setBounds(10, 10, 385, 400);
@@ -212,12 +217,30 @@ public class BookingPanel extends JPanel implements ActionListener {
       else if(e.getActionCommand().equals("Back")){
          System.out.println("Booking panel: back");
          getParent().getComponent(0).setVisible(false);
-         getParent().add(new Dashboard(), 0);
+         getParent().add(new Dashboard(acc), 0);
       }
       else if(e.getActionCommand().equals("Save")){
          System.out.println("Booking panel: save");
+         
+         String eventtype = (String)DetailsEventType.getSelectedItem();
+         
+         String msg = "booking:";
+         
+         if(eventtype.equals("Event")){
+            msg += "Event:" + acc.getUserID() +":"+ DetailsName.getText()+":"+DetailsDetails.getText()+":"+(String)DetailsFaciltyCombo.getSelectedItem()
+                              + ":"+(Integer)EventCapacitySpinner.getValue()+":"+EventDeadlineDate.getText()+
+                              calendar.getDate()+":"+EventFrom.getValue()+":"+EventTo.getValue();
+         }
+         else{
+            msg += "Meeting:" +acc.getUserID() +":" + DetailsName.getText()+":"+DetailsDetails.getText()+":"+(String)DetailsFaciltyCombo.getSelectedItem()
+            + ":"+(Integer)EventCapacitySpinner.getValue()+":"+EventDeadlineDate.getText()+
+            calendar.getDate()+":"+EventFrom.getValue()+":"+EventTo.getValue();;
+         }
+         
+         ClientFrame.cntrl.saveBooking(msg);
+         
          getParent().getComponent(0).setVisible(false);
-         getParent().add(new Dashboard(), 0);
+         getParent().add(new Dashboard(acc), 0);
       }
    }
 }

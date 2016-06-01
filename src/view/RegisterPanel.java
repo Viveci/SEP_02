@@ -7,8 +7,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import model.model.Account;
+
 import javax.swing.JPasswordField;
 import javax.swing.JComboBox;
 
@@ -21,6 +25,7 @@ public class RegisterPanel extends JPanel implements ActionListener{
    //JLabeles
    private JLabel TextWelcome;
    private JTextField UserName;
+   private JComboBox<String> UserType;
    
    public RegisterPanel() {
       
@@ -71,7 +76,7 @@ public class RegisterPanel extends JPanel implements ActionListener{
       add(UserName);
       
       String[] userTypes = {"Student","Teacher","Event organiser"};
-      JComboBox<String> UserType = new JComboBox(userTypes);
+      UserType = new JComboBox(userTypes);
       UserType.setBounds(100, 205, 210, 20);
       add(UserType);
       
@@ -85,9 +90,18 @@ public class RegisterPanel extends JPanel implements ActionListener{
          getParent().add(new LoginPanel(),0);
       }
       else if(e.getActionCommand().equals("Register")){
-         System.out.println("Register panel: Register");
-         getParent().getComponent(0).setVisible(false);
-         getParent().add(new Dashboard(),0);
+         String msg = "reg:"+UserName.getText()+":"+InputEmail.getText()+":"+InputPassword.getText()+":"+UserType.getSelectedIndex()+1;
+         if(ClientFrame.cntrl.register(msg)){
+            System.out.println("Register panel: Register");
+            getParent().getComponent(0).setVisible(false);
+            Account tempAccount = ClientFrame.cntrl.getAccount("dash:" + InputEmail.getText());
+            Dashboard db = new Dashboard(tempAccount);
+            db.setAcc(tempAccount);
+            getParent().add(db,0);
+         }
+         else{
+            JOptionPane.showMessageDialog(null,"There was an error during registration process","Registration",JOptionPane.WARNING_MESSAGE);
+         }
       }
    }
 }

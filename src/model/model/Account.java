@@ -1,6 +1,8 @@
-package model;
+package model.model;
 
-public class Account {
+import java.io.Serializable;
+
+public class Account implements Serializable{
    
    private String UserName;
    private String UserID;
@@ -14,6 +16,11 @@ public class Account {
       type = -1;
    }
 
+   public Account(String userId, String pass){
+      this.UserID = userId;
+      this.Password = pass;
+   }
+   
    public Account(String userName, String userID, String password, int type) {
       super();
       this.UserName = userName;

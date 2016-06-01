@@ -1,61 +1,132 @@
 package controller;
 
-import javax.swing.JPanel;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import connection.Client;
-import model.Account;
-import model.Booking;
+import connection.ClientListener;
+import model.mediator.Model;
+import model.model.Account;
+import model.model.EventView;
+import view.View;
 
-import view.BookingPanel;
-import view.Dashboard;
-import view.LoginPanel;
-import view.MyBookingsPanel;
-import view.RegisterPanel;
+public class ClientController implements Controller, Observer {
 
-public class clientController {
-
-   private JPanel panel;
-   private Booking model;
+   private View view;
    private Client client;
-   
-   //Constructors
-   public clientController(BookingPanel panel, Booking model){
-      this.panel = (BookingPanel) panel;
-      this.model = (Booking) model;
+   private ClientListener listen;
+   private ArrayList<String> msg;
+
+   // Constructors
+   public ClientController(View view, Client client) {
+      this.view = view;
+      this.client = client;
+      this.listen = client.getListener();
+      listen.addObserver(this);
+      this.msg = new ArrayList<>();
    }
-   
-   public clientController(Dashboard panel){
-      this.panel = (Dashboard) panel;
+
+   @Override
+   public ArrayList<String> execute(String what) {
+      return null;
    }
-   
-   public clientController(MyBookingsPanel panel){
-      this.panel = (MyBookingsPanel) panel;
-   }
-   
-   public clientController(RegisterPanel panel){
-      this.panel = (RegisterPanel) panel;
-   }
-   
-   public clientController(LoginPanel panel){
-      this.panel = (LoginPanel) panel;
-   }
-   
-   //Controller logic
-   public void setBookingID(int id){
-      this.model = (Booking)model;
-      model.setBookingID(id);
-   }
-   
-   public boolean authenticate(){
-      boolean valid = false;
-            
-      //Account dbAccount = (Account) client.msgServer("id")[0];
-      Account dbAccount = new Account("Marton","240190","asd",4);
-            
-      if(((LoginPanel)panel).getInputEmail().getText().equalsIgnoreCase(dbAccount.getUserID()) && ((LoginPanel)panel).getInputPassword().getText().equalsIgnoreCase(dbAccount.getPassword())){
-         valid = true;
+
+   public boolean auth(String input) {
+      boolean rtrn = false;
+
+      String[] parseString = input.split(":");
+      Account login = new Account(parseString[1], parseString[2]);
+
+      client.send(input);
+
+      try {
+         Thread.sleep(200);
       }
-      
-      return valid;
+      catch (InterruptedException e) {
+         e.printStackTrace();
+      }
+
+      if (msg.get(0).equals("Account")) {
+
+         // Parsing the message to Account
+         String[] AccountParse = msg.get(1).split(":");
+         Account account = new Account(AccountParse[0], AccountParse[1],
+               AccountParse[2], Integer.parseInt(AccountParse[3]));
+
+         // Logic
+         if (login.getUserID().equals(account.getUserID())
+               && login.getPassword().equals(account.getPassword())) {
+            rtrn = true;
+         }
+      }
+      return rtrn;
    }
+
+   public boolean register(String input) {
+      boolean rtrn = false;
+      client.send(input);
+
+      try {
+         Thread.sleep(200);
+      }
+      catch (InterruptedException e) {
+         e.printStackTrace();
+      }
+
+      if (msg.get(0).equals("Register")) {
+         if (msg.get(1).equals("true")) {
+            rtrn = true;
+         }
+      }
+
+      return rtrn;
+   }
+
+   public void saveBooking(String input){
+      client.send(input);
+      try {
+         Thread.sleep(200);
+      }
+      catch (InterruptedException e) {
+         e.printStackTrace();
+      }
+   }
+
+   public Account getAccount(String input) {
+      client.send(input);
+      Account account = new Account();
+      try {
+         Thread.sleep(200);
+      }
+      catch (InterruptedException e) {
+         e.printStackTrace();
+      }
+      if (msg.get(0).equals("Dashboard")) {
+         String[] AccountParse = msg.get(1).split(":");
+         account = new Account(AccountParse[0], AccountParse[1],
+               AccountParse[2], Integer.parseInt(AccountParse[3]));
+      }
+      return account;
+   }
+
+   public ArrayList<EventView> getAllEvents(String input) {
+      client.send(input);
+      try {
+         Thread.sleep(200);
+      }
+      catch (InterruptedException e) {
+         e.printStackTrace();
+      }
+      if(msg.get(0).equals("Events")){
+         System.out.println("Gottcha mate");
+      }
+      return null;
+   }
+   
+   @Override
+   public void update(Observable o, Object arg) {
+      this.msg = (ArrayList<String>) arg;
+   }
+
 }

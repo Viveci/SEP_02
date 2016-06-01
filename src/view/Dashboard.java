@@ -3,46 +3,58 @@ package view;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import model.Booking;
+import model.model.Account;
+import model.model.Booking;
+import model.model.EventView;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JButton;
 import javax.swing.JList;
+import com.toedter.calendar.JCalendar;
+import java.awt.Dimension;
 
 public class Dashboard extends JPanel implements ActionListener {
+   
+   private Account acc;
+   
+   private ArrayList<EventView> events;
+   
+   private JLabel profileName;
+   private JLabel profileId;
 
-   public static void main(String[] args) {
-      Dashboard gui = new Dashboard();
-      gui.setVisible(true);
-   }
-
-   public Dashboard() {
+   public Dashboard(Account acc) {
       setBounds(0, 50, 800, 420);
       setBackground(Color.decode("#FFFFFF"));
       setLayout(null);
+      
+      this.acc = acc;
       
       JPanel profilePanel = new JPanel();
       profilePanel.setBounds(10, 10, 350, 120);
       add(profilePanel);
       profilePanel.setLayout(null);
       
-      
-      ImageIcon profileimage = new ImageIcon("/SEP_02/user.jpg");
-      JLabel profileIcon = new JLabel(profileimage);
+      Image image = new ImageIcon("C:\\Dev\\JGWS\\SEP_02\\user.jpg").getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+      JLabel profileIcon = new JLabel(new ImageIcon(image));
       profileIcon.setBounds(20, 20, 80, 80);
       profilePanel.add(profileIcon);
       
-      JLabel profileName = new JLabel("User name");
+      profileName = new JLabel("User name");
       profileName.setFont(new Font("Aileron", Font.PLAIN, 18));
       profileName.setBounds(110, 30, 220, 20);
       profilePanel.add(profileName);
       
-      JLabel profileId = new JLabel("User id");
+      profileId = new JLabel("User id");
       profileId.setFont(new Font("Aileron", Font.PLAIN, 14));
       profileId.setBounds(110, 61, 220, 16);
       profilePanel.add(profileId);
@@ -67,36 +79,12 @@ public class Dashboard extends JPanel implements ActionListener {
       upcomingTitel.setBounds(130, 10, 150, 26);
       upcoming.add(upcomingTitel);
       
-      Booking[] data = {new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null),
-            new Booking(1, "240190@via.dk", "E 201", null, null)};
+      Booking[] data = {new Booking(1, "asd", "asd", null, null, null)};
+      
       JScrollPane listScroll = new JScrollPane();
       listScroll.setBounds(10, 40, 390, 250);
+      
       JList upcomingList = new JList(data);
-      upcomingList.setCellRenderer(new BookingCellRenderer());
       upcomingList.setBounds(10, 40, 390, 250);
       listScroll.setViewportView(upcomingList);
       upcoming.add(listScroll);
@@ -121,8 +109,29 @@ public class Dashboard extends JPanel implements ActionListener {
       buttons.add(buttonsLogout);
       buttonsLogout.addActionListener(this);
       
+      if(this.acc != null){
+         profileName.setText(acc.getUserName());
+         profileId.setText(acc.getUserID());
+      }
+      
+      events = ClientFrame.cntrl.getAllEvents("events:"+acc.getUserID());
+      
    }
 
+   public Account getAcc() {
+      return acc;
+   }
+
+   public void setAcc(Account acc) {
+      this.acc = acc;
+      this.refresh();
+   }
+   
+   private void refresh(){
+      profileName.setText(acc.getUserName());
+      profileId.setText(acc.getUserID());
+   }
+   
    @Override
    public void actionPerformed(ActionEvent e) {
       if (e.getActionCommand().equals("LogOut")) {
@@ -133,12 +142,12 @@ public class Dashboard extends JPanel implements ActionListener {
       else if(e.getActionCommand().equals("My bookings")){
          System.out.println("Dashboard panel: My bookings");
          getParent().getComponent(0).setVisible(false);
-         getParent().add(new MyBookingsPanel(), 0);
+         getParent().add(new MyBookingsPanel(acc), 0);
       }
       else if(e.getActionCommand().equals("New Booking")){
          System.out.println("Dashboard panel: New Booking");
          getParent().getComponent(0).setVisible(false);
-         getParent().add(new BookingPanel(), 0);
+         getParent().add(new BookingPanel(acc), 0);
       }
    }
 }
