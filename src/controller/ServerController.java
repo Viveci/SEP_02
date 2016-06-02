@@ -49,7 +49,7 @@ public class ServerController implements Controller {
          case "events":
             System.out.println(getTime() + ":ServerController: getin events ....");
             reply.add("Events");
-            String[] temp = (String[]) adapter.getAllEvents().toArray();
+            String[] temp = adapter.getAllEvents();
             for (int i = 0; i < temp.length; i++) {
                reply.add(temp[i]);
             }
