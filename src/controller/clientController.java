@@ -111,6 +111,7 @@ public class ClientController implements Controller, Observer {
    }
 
    public ArrayList<EventView> getAllEvents(String input) {
+      ArrayList<EventView> temp = new ArrayList<>();
       client.send(input);
       try {
          Thread.sleep(200);
@@ -119,9 +120,11 @@ public class ClientController implements Controller, Observer {
          e.printStackTrace();
       }
       if(msg.get(0).equals("Events")){
-         System.out.println("Gottcha mate");
+         for (int i = 1; i < msg.size(); i++) {
+            temp.add(new EventView(msg.get(i)));
+         }
       }
-      return null;
+      return temp;
    }
    
    @Override

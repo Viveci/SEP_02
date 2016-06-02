@@ -49,6 +49,10 @@ public class ServerController implements Controller {
          case "events":
             System.out.println(getTime() + ":ServerController: getin events ....");
             reply.add("Events");
+            String[] temp = (String[]) adapter.getAllEvents().toArray();
+            for (int i = 0; i < temp.length; i++) {
+               reply.add(temp[i]);
+            }
             break;
          case "booking":
             System.out.println(getTime() + ":ServerController: inserting new booking ....");

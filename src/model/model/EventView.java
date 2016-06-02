@@ -2,13 +2,6 @@ package model.model;
 
 public class EventView {
 
-   /*
-    * events.eventname, events.capacity, events.eventdescription,
-    * events.signupdeadline, events.roomnumber, bookings.bookingsid,
-    * bookings.createdby, bookings.eventid, bookings.reservationdate,
-    * bookings.hoursfrom, bookings.hoursto, subscribe.userid
-    */
-
    private String eventName;
    private String eventDescription;
    private int eventCapacity;
@@ -20,6 +13,34 @@ public class EventView {
    private String reservationDate;
    private String from;
    private String to;
+
+   private String parse;
+   
+   public EventView(String eventName, String eventDescription,
+         int eventCapacity, String eventSignup, String roomNumber,
+         int bookingId, String createdBy, int eventId, String reservationDate,
+         String from, String to) {
+      super();
+      this.eventName = eventName;
+      this.eventDescription = eventDescription;
+      this.eventCapacity = eventCapacity;
+      this.eventSignup = eventSignup;
+      this.roomNumber = roomNumber;
+      this.bookingId = bookingId;
+      this.createdBy = createdBy;
+      this.eventId = eventId;
+      this.reservationDate = reservationDate;
+      this.from = from;
+      this.to = to;
+   }
+
+   public EventView(String string) {
+      this.parse = string;
+   }
+   
+   public String toString(){
+      return this.parse;
+   }
 
    public String getEventName() {
       return eventName;

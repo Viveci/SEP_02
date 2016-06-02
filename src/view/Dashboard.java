@@ -79,7 +79,9 @@ public class Dashboard extends JPanel implements ActionListener {
       upcomingTitel.setBounds(130, 10, 150, 26);
       upcoming.add(upcomingTitel);
       
-      Booking[] data = {new Booking(1, "asd", "asd", null, null, null)};
+      //Booking[] data = {new Booking(1, "asd", "asd", null, null, null)};
+      events = ClientFrame.cntrl.getAllEvents("events:"+acc.getUserID());
+      EventView[] data = {events.get(0)};
       
       JScrollPane listScroll = new JScrollPane();
       listScroll.setBounds(10, 40, 390, 250);
@@ -113,9 +115,6 @@ public class Dashboard extends JPanel implements ActionListener {
          profileName.setText(acc.getUserName());
          profileId.setText(acc.getUserID());
       }
-      
-      events = ClientFrame.cntrl.getAllEvents("events:"+acc.getUserID());
-      
    }
 
    public Account getAcc() {
